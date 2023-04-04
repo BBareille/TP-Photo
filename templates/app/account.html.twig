@@ -1,0 +1,14 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+    <div>Votre email :{{ app.user.email }} </div>
+    <div>Vos rôles :</div>
+    {% for role in app.user.roles %}
+        <div>{{ role }} </div>
+    {% endfor %}
+
+    <a href="{{ path('app_setphotographer') }}">Devenir photographe</a>
+
+
+
+{% endblock %}

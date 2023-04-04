@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Folder{% endblock %}
+
+{% block body %}
+    <h1>Création d'un sous dossiers</h1>
+        {{ form(form) }}
+
+    <a href="{{ path('app_folder_index') }}">Retourner au dossier principal</a>
+{% endblock %}

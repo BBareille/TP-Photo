@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des dossiers{% endblock %}
+
+{% block body %}
+    <div class="grid justify-center">
+    <h1 class="text-4xl font-extrabold">Listes des dossiers publics</h1>
+        {% for folder in folders %}
+            {% if folder.owner == null %}
+                <div class="border-2 flex-col p-2 mt-3 mb-3">
+                    <a href="{{ path('app_folder_show', {'id': folder.id}) }}">{{ folder.name }} ({{ folder.photoCollection | length }})</a>
+                    <div>sous-dossiers :</div>
+                    <ul>
+                        {% for subfolder in folder.subfolders %}
+                        <li class="pl-3" >
+                            <a href="{{ path('app_folder_show', {'id': folder.id}) }}">{{ folder.name }} ({{ folder.photoCollection | length }})</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% if is_granted('ROLE_PHOTO') %}
+    <a class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" href="{{ path('app_folder_new') }}">Créer votre dossier</a>
+    {% endif %}
+    </div>
+{% endblock %}

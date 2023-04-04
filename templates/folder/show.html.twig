@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Folder{% endblock %}
+
+{% block body %}
+    <h1 class="text-4xl font-extrabold m-4 text-center">{{ folder.name }}</h1>
+    <div class="flex justify-center mt-6">
+
+                    <div class="flex justify-between w-1/2">
+                        <a href="{{ path('app_image_new', {'id' : folder.id} )}}">Ajouter des photos à ce dossier</a>
+                        <a href="{{ path('app_folder_addsubfolder', {'id': folder.id}) }}">Ajouter un sous-dossiers</a>
+                    </div>
+    </div>
+                <div class="grid grid-cols-2 md:grid-cols-10 gap-4 justify-items-center">
+
+                    {% if photos %}
+                {% for photo in photos %}
+                    <div class="mt-6">
+                        <button data-modal-target="popup-modal-{{ photo.id }}" data-modal-toggle="popup-modal-{{ photo.id }}" type="button">
+                            <img class="max-h-[100px] max-w-[100px] rounded-lg" src="/uploads/photo/{{ photo.name }}" alt="">
+                        </button>
+
+                    </div>
+                    <div id="popup-modal-{{ photo.id }}" tabindex="-1" class="fixed top-0 left-0 right-0 z-50 hidden p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
+                        <div class="flex justify-center">
+                            <div class="relative w-full h-full max-w-md md:h-auto">
+                                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                    <div class="p-6 pb-0 text-center">
+                                        <img class="rounded-lg" src="/uploads/photo/{{ photo.name }}" alt="">
+                                    </div>
+                                    <div class="p-6 flex flex-col justify-center">
+                                        <a href="{{ path('app_image_edit', {'id': photo.id}) }}">Modifier l'image</a>
+                                        {% if photo.label %}
+                                        <p>Nom: {{ photo.label}} </p>
+                                        {% endif %}
+                                        {% if photo.description %}
+                                        <p>Description :  {{ photo.description }}</p>
+                                        {% endif %}
+                                        {% if photo.tags %}
+                                        <p>tags : {% for tag in photo.tags %} {{ tag.name }}, {% endfor%} </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                    {% else %}
+                        <div>Aucune photos dans ce dossier</div>
+                    {% endif %}
+                </div>
+
+
+
+
+
+    <a href="{{ path('app_folder_index') }}">Retourner à la liste des dossiers</a>
+    <form method="post" action="{{ path('app_folder_delete', {'id' : folder.id}) }}">
+    <button type="submit">Supprimer le dossier</button>
+    </form>
+
+{#    {{ include('folder/_delete_form.html.twig') }}#}
+{% endblock %}

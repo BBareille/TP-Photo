@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Photo{% endblock %}
+
+{% block body %}
+    <h1>Modification des données liés à une photo</h1>
+    <img width="200px" src="/uploads/photo/{{ photo.name }}" />
+    {{ include('image/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+
+
+
+    {{ include('image/_delete_form.html.twig', {'button_label': 'Supprimer'}) }}
+
+
+    <a href="{{ path('app_folder_show', {'id': folder.id}) }}">Retourner au dossier</a>
+{% endblock %}
