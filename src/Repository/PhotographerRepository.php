@@ -47,7 +47,7 @@ class PhotographerRepository extends ServiceEntityRepository implements Password
         public function nbOfPhotoByUser($id)
         {
                 $qb = $this->createQueryBuilder('u')
-                            ->join("u.allowedFolders", "f")
+                            ->join("u.personalFolder", "f")
                             ->join('f.childrenPhoto', 'p')
                             ->select('count(p.id)')
                             ->where('u.email = :id')
@@ -59,7 +59,7 @@ class PhotographerRepository extends ServiceEntityRepository implements Password
         public function mostPopularFolder($id){
                 
                 return $this->createQueryBuilder('u')
-                            ->join('u.allowedFolders', 'f')
+                            ->join('u.personalFolder', 'f')
                             ->join('f.childrenPhoto', 'p')
                             ->select('f.name')
                             ->where('u.email =:id')
@@ -74,7 +74,7 @@ class PhotographerRepository extends ServiceEntityRepository implements Password
         
         public function nbOfTagByUser($id){
                 return $this->createQueryBuilder('u')
-                            ->join('u.allowedFolders', 'f')
+                            ->join('u.personalFolder', 'f')
                             ->join('f.childrenPhoto', 'p')
                             ->join('p.tags', 't')
                             ->select('count(t.id)')
@@ -87,7 +87,7 @@ class PhotographerRepository extends ServiceEntityRepository implements Password
         
         public function mostPopularTag($id){
                 return $this->createQueryBuilder('u')
-                            ->join('u.allowedFolders', 'f')
+                            ->join('u.personalFolder', 'f')
                             ->join('f.childrenPhoto', 'p')
                             ->join('p.tags', 't')
                             ->select('t.name')

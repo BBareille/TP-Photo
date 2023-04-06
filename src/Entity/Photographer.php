@@ -40,14 +40,10 @@ class Photographer extends User
         }
     }
 
-    public function addUserToMyPersonalFolder(User $user, Folder $folder)
+    public function addUserToMyPersonalFolder(Client $user, Folder $folder)
     {
         if ($this->personalFolder->contains($folder)) {
             $user->addAllowedFolder($folder);
-        } else if (!$this->personalFolder->contains($folder)) {
-            throw new \Exception('Vous n\'êtes pas autorisé à ajouter un utilisateur sur ce dossier');
-        } else {
-            throw new \Exception('Utilisateur inconnu');
         }
     }
 

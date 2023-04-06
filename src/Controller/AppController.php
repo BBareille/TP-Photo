@@ -20,7 +20,7 @@ class AppController extends AbstractController
 
         if($this->getUser()){
             $userIdentifier = $this->getUser()->getUserIdentifier();
-            $nbphoto = $repository->nbOfPhotoByUser($userIdentifier);
+            $nbPhoto = $repository->nbOfPhotoByUser($userIdentifier);
             $nbTags = $repository->nbOfTagByUser($userIdentifier);
             $mostPopularFolder = $repository->mostPopularFolder
             ($userIdentifier);
@@ -28,7 +28,7 @@ class AppController extends AbstractController
         }
 
         return $this->render('app/home.html.twig', [
-            'statsNbPhoto' => $nbphoto ?? 0,
+            'statsNbPhoto' => $nbPhoto ?? 0,
             'statsNbTags' => $nbTags ?? 0,
             'statsMostPopularFolder' => $mostPopularFolder[0] ?? 'Aucun dossier',
             'statsMostPopularTag' => $mostPopularTag ?? 0

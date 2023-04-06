@@ -2,6 +2,7 @@
 {% block title %}Liste des dossiers{% endblock %}
 
 {% block body %}
+    {% if is_granted('ROLE_PHOTO') %}
     <div class="grid justify-center">
         <h1 class="text-4xl font-extrabold">Listes des dossiers privé</h1>
         {% for folder in folders %}
@@ -12,14 +13,36 @@
                     <ul>
                         {% for subfolder in folder.childrenFolder %}
                             <li class="pl-3" >
-                                <a href="{{ path('app_folder_show', {'id': subfolder.id}) }}">{{ subfolder.name }} ({{ subfolder.photoCollection | length }})</a>
-                                <div>sous-dossiers : {{ subfolder.subfolders | length }}</div>
+                                <a href="{{ path('app_folder_show', {'id': subfolder.id}) }}">{{ subfolder.name }} ({{ subfolder.childrenPhoto | length }})</a>
+                                <div>sous-dossiers : {{ subfolder.childrenFolder| length }}</div>
                             </li>
                         {% endfor %}
                     </ul>
                 </div>
             {% endif %}
         {% endfor %}
+
             <a class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" href="{{ path('app_folder_new') }}">Créer votre dossier</a>
+
     </div>
+    {% endif %}
+    {% if is_granted('ROLE_USER') %}
+    <div class="grid justify-center">
+    <h1 class="text-4xl font-extrabold">Listes des dossiers privé</h1>
+    {% for folder in app.user.allowedFolder %}
+        <div class="border-2 flex-col p-2 mt-3 mb-3">
+            <a href="{{ path('app_folder_show', {'id': folder.id}) }}">{{ folder.name }} ({{ folder.childrenPhoto | length }})</a>
+            <div>sous-dossiers :</div>
+            <ul>
+                {% for subfolder in folder.childrenFolder %}
+                    <li class="pl-3" >
+                        <a href="{{ path('app_folder_show', {'id': subfolder.id}) }}">{{ subfolder.name }} ({{ subfolder.childrenPhoto | length }})</a>
+                        <div>sous-dossiers : {{ subfolder.childrenFolder| length }}</div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        </div>
+        {% endfor %}
+    {% endif %}
 {% endblock %}

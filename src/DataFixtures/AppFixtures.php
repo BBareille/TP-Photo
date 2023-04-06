@@ -2,16 +2,11 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Folder;
-use App\Entity\Photo;
 use App\Factory\ClientFactory;
-use App\Factory\FolderFactory;
 use App\Factory\PhotoFactory;
 use App\Factory\PhotographerFactory;
-use App\Factory\UserFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Doctrine\Tests\Models\Enums\Product;
 
 class AppFixtures extends Fixture
 {
