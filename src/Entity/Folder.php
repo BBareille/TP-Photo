@@ -20,7 +20,7 @@ class Folder extends Files
     private ?Collection $childrenFolder;
     #[ORM\OneToMany(mappedBy: 'parentFolder', targetEntity: Photo::class, cascade: ['persist', 'remove'])]
     private ?Collection $childrenPhoto;
-    #[ORM\ManyToMany(targetEntity: Client::class, mappedBy: 'allowedFolders')]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'allowedFolders')]
     private Collection $authorizedUser;
     public function __construct()
     {

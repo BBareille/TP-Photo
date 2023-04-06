@@ -8,12 +8,8 @@ namespace App\Entity;
 
 #[ORM\Entity(repositoryClass: PhotographerRepository::class)]
 class Photographer extends User
-{
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    protected ?int $id = null;
-    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Folder::class, cascade: ['persist', 'remove'])]
+
+{    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Folder::class, cascade: ['persist', 'remove'])]
     private ?Collection $personalFolder;
     public function __construct()
     {

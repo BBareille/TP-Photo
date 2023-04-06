@@ -8,9 +8,16 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ORM\MappedSuperclass]
-abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
+#[ORM\Entity]
+#[ORM\InheritanceType('JOINED')]
+#[ORM\DiscriminatorColumn(name: 'disc', type: 'string')]
+#[ORM\DiscriminatorMap(['client' => Client::class, 'photographer' => Photographer::class])]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    protected ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
     protected ?string $email = null;
