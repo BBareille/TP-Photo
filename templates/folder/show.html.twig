@@ -17,21 +17,21 @@
                 {% for photo in photos %}
                     <div class="mt-6">
                         <button data-modal-target="popup-modal-{{ photo.id }}" data-modal-toggle="popup-modal-{{ photo.id }}" type="button">
-                            <img class="max-h-[100px] max-w-[100px] rounded-lg" src="/uploads/photo/{{ photo.name }}" alt="">
+                            <img class="max-h-[100px] max-w-[100px] rounded-lg" src="/uploads/photo/{{ photo.source }}" alt="">
                         </button>
-
                     </div>
+
                     <div id="popup-modal-{{ photo.id }}" tabindex="-1" class="fixed top-0 left-0 right-0 z-50 hidden p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
                         <div class="flex justify-center">
                             <div class="relative w-full h-full max-w-md md:h-auto">
                                 <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                                     <div class="p-6 pb-0 text-center">
-                                        <img class="rounded-lg" src="/uploads/photo/{{ photo.name }}" alt="">
+                                        <img class="rounded-lg" src="/uploads/photo/{{ photo.source }}" alt="">
                                     </div>
                                     <div class="p-6 flex flex-col justify-center">
                                         <a href="{{ path('app_image_edit', {'id': photo.id}) }}">Modifier l'image</a>
-                                        {% if photo.label %}
-                                        <p>Nom: {{ photo.label}} </p>
+                                        {% if photo.name %}
+                                        <p>Nom: {{ photo.name}} </p>
                                         {% endif %}
                                         {% if photo.description %}
                                         <p>Description :  {{ photo.description }}</p>

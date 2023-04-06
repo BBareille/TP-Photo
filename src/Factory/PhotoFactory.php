@@ -47,7 +47,9 @@ final class PhotoFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
-            'name' => self::faker()->text(255),
+            'description' => self::faker()->text(255),
+            'name' => self::faker()->text(20),
+            'source' => '/uploads/photo/32-200x300-642bfcd50090f.jpg',
         ];
     }
 

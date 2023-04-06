@@ -15,26 +15,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    protected ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    private ?string $email = null;
+    protected ?string $email = null;
 
     #[ORM\Column]
-    private array $roles = [];
+    protected array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
     #[ORM\Column]
-    private ?string $password = null;
+    protected ?string $password = null;
 
-    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Folder::class, cascade: ['remove', 'persist'])]
-    private Collection $folders;
+    #[ORM\JoinTable(name: 'user_folder')]
+    #[ORM\JoinColumn(name: '')]
+    #[ORM\ManyToMany(targetEntity: Folder::class, inversedBy: 'authorizedUser')]
+    protected Collection $allowedFolders;
+
 
     public function __construct()
     {
-        $this->folders = new ArrayCollection();
+        $this->allowedFolders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -70,7 +70,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -107,30 +106,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    /**
-     * @return Collection<int, Folder>
-     */
-    public function getFolders(): Collection
+    public function getAllowedFolder(): Collection
     {
-        return $this->folders;
+        return $this->allowedFolders;
     }
-
-    public function addFolder(Folder $folder): self
+    public function addAllowedFolder(Folder $folder): self
     {
-        if (!$this->folders->contains($folder)) {
-            $this->folders->add($folder);
-            $folder->setOwner($this);
+        if (!$this->allowedFolders->contains($folder)) {
+            $this->allowedFolders->add($folder);
+            $folder->addAuthorizedUser($this);
         }
 
         return $this;
     }
 
-    public function removeFolder(Folder $folder): self
+    public function removeAllowedFolder(?Folder $folder): self
     {
-        if ($this->folders->removeElement($folder)) {
-            // set the owning side to null (unless already changed)
+        if ($this->allowedFolders->removeElement($folder)) {
             if ($folder->getOwner() === $this) {
-                $folder->setOwner(null);
+                $folder->removeAuthorizedUser(null);
             }
         }
 

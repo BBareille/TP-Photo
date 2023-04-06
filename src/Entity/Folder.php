@@ -8,134 +8,81 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FolderRepository::class)]
-class Folder
+class Folder extends Files
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column(length: 30, unique: true)]
-    private ?string $name = null;
-
-    #[ORM\OneToMany(mappedBy: 'folder', targetEntity: Photo::class, cascade: ['persist', 'remove'])]
-    private Collection $photoCollection;
-
-    #[ORM\ManyToOne(inversedBy: 'folders')]
-    private ?User $owner = null;
-
-    #[ORM\ManyToOne(targetEntity: self::class, cascade: ['persist', 'remove'], inversedBy: 'subFolders')]
-    private ?self $folder = null;
-
-    #[ORM\OneToMany(mappedBy: 'folder', targetEntity: self::class, cascade: ['persist', 'remove'])]
-    private Collection $subFolders;
-
+    #[ORM\OneToMany(mappedBy: 'parentFolder', targetEntity: Folder::class ,cascade: ['persist', 'remove'] )]
+    private ?Collection $childrenFolder;
+    #[ORM\OneToMany(mappedBy: 'parentFolder', targetEntity: Photo::class)]
+    private ?Collection $childrenPhoto;
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'allowedFolders')]
+    private Collection $authorizedUser;
     public function __construct()
     {
-        $this->photoCollection = new ArrayCollection();
-        $this->subFolders = new ArrayCollection();
+        $this->childrenPhoto = new ArrayCollection();
+        $this->childrenFolder = new ArrayCollection();
+        $this->authorizedUser = new ArrayCollection();
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
-    public function getName(): ?string
+    /**
+     * @return Collection|null
+     */
+    public function getChildrenPhoto(): ?Collection
     {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
+        return $this->childrenPhoto;
     }
 
     /**
-     * @return Collection<int, Photo>
+     * @return Collection
      */
-    public function getPhotoCollection(): Collection
+    public function getChildrenFolder(): Collection
     {
-        return $this->photoCollection;
-    }
-
-    public function addPhotoCollection(Photo $photoCollection): self
-    {
-        if (!$this->photoCollection->contains($photoCollection)) {
-            $this->photoCollection->add($photoCollection);
-            $photoCollection->setFolder($this);
-        }
-
-        return $this;
-    }
-
-    public function removePhotoCollection(Photo $photoCollection): self
-    {
-        if ($this->photoCollection->removeElement($photoCollection)) {
-            // set the owning side to null (unless already changed)
-            if ($photoCollection->getFolder() === $this) {
-                $photoCollection->setFolder(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getOwner(): ?User
-    {
-        return $this->owner;
-    }
-
-    public function setOwner(?User $owner): self
-    {
-        $this->owner = $owner;
-
-        return $this;
-    }
-
-    public function getFolder(): ?self
-    {
-        return $this->folder;
-    }
-
-    public function setFolder(?self $folder): self
-    {
-        $this->folder = $folder;
-
-        return $this;
+        return $this->childrenFolder;
     }
 
     /**
-     * @return Collection<int, self>
+     * @return Collection
      */
-    public function getSubFolders(): Collection
+    public function getAuthorizedUser(): Collection
     {
-        return $this->subFolders;
+        return $this->authorizedUser;
     }
 
-    public function addSubFolder(self $subFolder): self
+    public function addChildrenFolder(Files $files)
     {
-        if (!$this->subFolders->contains($subFolder)) {
-            $this->subFolders->add($subFolder);
-            $subFolder->setFolder($this);
+        if(!$this->childrenFolder->contains($files))
+        {
+            $this->childrenFolder->add($files);
+            $files->setParentFolder($this);
         }
 
-        return $this;
     }
-
-    public function removeSubFolder(self $subFolder): self
+    public function addChildrenPhoto(Files $files)
     {
-        if ($this->subFolders->removeElement($subFolder)) {
-            // set the owning side to null (unless already changed)
-            if ($subFolder->getFolder() === $this) {
-                $subFolder->setFolder(null);
-            }
+        if(!$this->childrenPhoto->contains($files))
+        {
+            $this->childrenPhoto->add($files);
+            $files->setParentFolder($this);
         }
 
-        return $this;
     }
 
+    public function addAuthorizedUser(User $user)
+    {
+        if(!$this->authorizedUser->contains($user))
+        {
+            $this->authorizedUser->add($user);
+            $user->addAllowedFolder($this);
+        }
+    }
+
+    public function removeAuthorizedUser(?User $user)
+    {
+        if($this->authorizedUser->contains($user))
+        {
+            $this->authorizedUser->remove($user);
+            $user->removeAllowedFolder(null);
+        }
+    }
 
 }

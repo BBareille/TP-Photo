@@ -29,14 +29,15 @@ class PhotoController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()){
             /** @var UploadedFile $photoFile */
-
             $photoFiles = $form->get('photos')->getData();
             foreach ($photoFiles as $photoFile) {
                 $photo = new Photo();
-                $photo->setFolder($folder);
+                $photo->setParentFolder($folder);
                 $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $newFilename = $originalFilename . "-" . uniqid() . "." . $photoFile->guessExtension();
-                $photo->setName($newFilename);
+                $photo->setSource($newFilename);
+                $photo->setDescription('');
+                $photo->setName($originalFilename);
                 try {
                     $photoFile->move(
                         $this->getParameter('photo_directory'),

@@ -15,9 +15,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class FolderController extends AbstractController
 {
     #[Route('/', name: 'app_folder_index', methods: ['GET'])]
-    public function index(FolderRepository $folderRepository): Response
+    public function index(FolderRepository $folderRepository, PhotoRepository $photoRepository): Response
     {
         $folders = $folderRepository->findAll();
+
+        $photo = $photoRepository->findAll();
         return $this->render('folder/index.html.twig', [
             'folders' => $folders,
         ]);
@@ -58,7 +60,7 @@ class FolderController extends AbstractController
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
-            $folder->setFolder($parentFolder);
+            $folder->setParentFolder($parentFolder);
             $folder->setOwner($this->getUser());
             $folderRepository->save($folder, true);
             return $this->redirectToRoute('app_folder_show', ['id' => $id]);
@@ -72,7 +74,6 @@ class FolderController extends AbstractController
     #[Route('/{id}', name: 'app_folder_show', methods: ['GET'])]
     public function show(Folder $folder, PhotoRepository $photoRepository, int $id): Response
     {
-
         $photos = $photoRepository->findPhotoByFolder($id);
         return $this->render('folder/show.html.twig', [
             'photos' => $photos,

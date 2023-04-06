@@ -6,15 +6,15 @@
     <div class="grid justify-center">
     <h1 class="text-4xl font-extrabold">Listes des dossiers publics</h1>
         {% for folder in folders %}
-            {% if folder.owner == null %}
+            {% if folder.owner == null and folder.parentFolder == null %}
                 <div class="border-2 flex-col p-2 mt-3 mb-3">
-                    <a href="{{ path('app_folder_show', {'id': folder.id}) }}">{{ folder.name }} ({{ folder.photoCollection | length }})</a>
+                    <a href="{{ path('app_folder_show', {'id': folder.id}) }}">{{ folder.name }} ({{ folder.childrenPhoto | length }})</a>
                     <div>sous-dossiers :</div>
                     <ul>
-                        {% for subfolder in folder.subfolders %}
-                        <li class="pl-3" >
-                            <a href="{{ path('app_folder_show', {'id': folder.id}) }}">{{ folder.name }} ({{ folder.photoCollection | length }})</a>
-                        </li>
+                        {% for subfolder in folder.childrenFolder %}
+                            <li class="pl-3">
+                                <a href="{{ path('app_folder_show', {'id': subfolder.id}) }}">{{ subfolder.name }} ({{ subfolder.childrenPhoto | length }})</a>
+                            </li>
                         {% endfor %}
                     </ul>
                 </div>

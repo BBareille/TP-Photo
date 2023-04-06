@@ -8,106 +8,76 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PhotoRepository::class)]
-class Photo
+class Photo extends Files
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $label = null;
-
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
-
-    #[ORM\ManyToOne(cascade: ['persist', 'remove'], inversedBy: 'PhotoCollection')]
-    private ?Folder $folder = null;
-
-    #[ORM\ManyToMany(targetEntity: Tags::class, inversedBy: 'photos', cascade: ['persist', 'remove'])]
-    private Collection $tags;
+    private ?string $source;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
+
+    #[ORM\ManyToMany(targetEntity: Tags::class, inversedBy: 'photos')]
+    private Collection $tags;
 
     public function __construct()
     {
         $this->tags = new ArrayCollection();
     }
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
-    public function getLabel(): ?string
-    {
-        return $this->label;
-    }
-
-    public function setLabel(?string $label): self
-    {
-        $this->label = $label;
-
-        return $this;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getFolder(): ?Folder
-    {
-        return $this->folder;
-    }
-
-    public function setFolder(?Folder $folder): self
-    {
-        $this->folder = $folder;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Tags>
-     */
-    public function getTags(): Collection
-    {
+    public function getTags(){
         return $this->tags;
     }
 
-    public function addTag(Tags $tag): self
+    public function addTag(Tags $tag)
     {
-        if (!$this->tags->contains($tag)) {
+        if(!$this->tags->contains($tag))
+        {
             $this->tags->add($tag);
+            $tag->addPhoto($this);
         }
-
-        return $this;
     }
 
-    public function removeTag(Tags $tag): self
+    public function removeTag(Tags $tags)
     {
-        $this->tags->removeElement($tag);
-
-        return $this;
+        if($this->tags->contains($tags))
+        {
+            $this->tags->remove($tags);
+            $tags->removePhoto($this);
+        }
     }
 
+    /**
+     * @return string|null
+     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    /**
+     * @param string|null $description
+     */
+    public function setDescription(?string $description): void
     {
         $this->description = $description;
-
-        return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getSource(): string
+    {
+        return $this->source;
+    }
+
+    /**
+     * @param string $source
+     */
+    public function setSource(string $source): void
+    {
+        $this->source = $source;
+    }
+
+
+
 }

@@ -56,12 +56,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->save($user, true);
     }
 
-
     public function nbOfPhotoByUser($id)
     {
         $qb = $this->createQueryBuilder('u')
-            ->join("u.folders", "f")
-            ->join('f.photoCollection', 'p')
+            ->join("u.allowedFolders", "f")
+            ->join('f.childrenPhoto', 'p')
             ->select('count(p.id)')
             ->where('u.email = :id')
             ->setParameter('id', $id);
@@ -72,8 +71,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function mostPopularFolder($id){
 
         return $this->createQueryBuilder('u')
-            ->join('u.folders', 'f')
-            ->join('f.photoCollection', 'p')
+            ->join('u.allowedFolders', 'f')
+            ->join('f.childrenPhoto', 'p')
             ->select('f.name')
             ->where('u.email =:id')
             ->groupBy('f.id')
@@ -87,8 +86,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function nbOfTagByUser($id){
         return $this->createQueryBuilder('u')
-            ->join('u.folders', 'f')
-            ->join('f.photoCollection', 'p')
+            ->join('u.allowedFolders', 'f')
+            ->join('f.childrenPhoto', 'p')
             ->join('p.tags', 't')
             ->select('count(t.id)')
             ->where('u.email = :id')
@@ -100,8 +99,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function mostPopularTag($id){
         return $this->createQueryBuilder('u')
-            ->join('u.folders', 'f')
-            ->join('f.photoCollection', 'p')
+            ->join('u.allowedFolders', 'f')
+            ->join('f.childrenPhoto', 'p')
             ->join('p.tags', 't')
             ->select('t.name')
             ->where('u.email =:id')
@@ -112,14 +111,4 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getSingleScalarResult()
             ;
     }
-
-//    public function findOneBySomeField($value): ?User
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

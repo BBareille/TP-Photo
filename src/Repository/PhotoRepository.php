@@ -46,7 +46,8 @@ class PhotoRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
             ->select('p')
-            ->where('p.folder = :val')
+            ->join('p.parentFolder', 'f')
+            ->where('f.id = :val')
             ->setParameter('val', $folderId)
             ->getQuery()
             ->getResult()
