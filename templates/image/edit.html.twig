@@ -4,7 +4,7 @@
 
 {% block body %}
     <h1>Modification des données liés à une photo</h1>
-    <img width="200px" src="/uploads/photo/{{ photo.name }}" />
+    <img width="200px" src="/uploads/photo/{{ photo.source }}" />
     {{ include('image/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
 
 

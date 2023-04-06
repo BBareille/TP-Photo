@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Controller;
+use App\Entity\Photographer;
 use App\Entity\User;
+use App\Repository\PhotographerRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,17 +13,18 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class AppController extends AbstractController
 {
 
-    public function index(UserRepository $userRepository): Response
+    public function index(PhotographerRepository $repository): Response
     {
         $mostPopularTag = "Aucun";
         $nbTags = 0;
 
         if($this->getUser()){
             $userIdentifier = $this->getUser()->getUserIdentifier();
-            $nbphoto = $userRepository->nbOfPhotoByUser($userIdentifier);
-            $nbTags = $userRepository->nbOfTagByUser($userIdentifier);
-            $mostPopularFolder = $userRepository->mostPopularFolder($userIdentifier);
-            $mostPopularTag = $userRepository->mostPopularTag($userIdentifier);
+            $nbphoto = $repository->nbOfPhotoByUser($userIdentifier);
+            $nbTags = $repository->nbOfTagByUser($userIdentifier);
+            $mostPopularFolder = $repository->mostPopularFolder
+            ($userIdentifier);
+            $mostPopularTag = $repository->mostPopularTag($userIdentifier);
         }
 
         return $this->render('app/home.html.twig', [

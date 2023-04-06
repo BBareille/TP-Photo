@@ -11,7 +11,6 @@ class Photographer extends User
 {
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Folder::class, cascade: ['persist', 'remove'])]
     private ?Collection $personalFolder;
-
     public function __construct()
     {
         parent::__construct();

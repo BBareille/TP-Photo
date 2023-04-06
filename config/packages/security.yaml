@@ -6,11 +6,12 @@ security:
     providers:
         app_client_provider:
             entity:
-                class: App\Entity\User
+                class: App\Entity\Client
                 property: 'email'
         app_photographer_provider:
             entity:
                 class: App\Entity\Photographer
+                property: 'email'
         app_users:
             chain:
                 providers: ['app_photographer_provider','app_client_provider']

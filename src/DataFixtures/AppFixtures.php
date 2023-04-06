@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Folder;
 use App\Entity\Photo;
+use App\Factory\ClientFactory;
 use App\Factory\FolderFactory;
 use App\Factory\PhotoFactory;
 use App\Factory\PhotographerFactory;
@@ -22,15 +23,15 @@ class AppFixtures extends Fixture
                 'password' => '$2y$13$mylktairAOB.S.UodSt4aeO4mqxbr3mNLrLNIe7OqkQM6vHKizgUC'
             ]);
 
-        UserFactory::createOne([
+        ClientFactory::createOne([
             "roles" => ['ROLE_USER'],
             "email" => 'user@user.fr',
             'password' => '$2y$13$mylktairAOB.S.UodSt4aeO4mqxbr3mNLrLNIe7OqkQM6vHKizgUC'
         ]);
 
-        FolderFactory::createOne([
-            'owner' => PhotographerFactory::random()
-        ]);
+//        FolderFactory::createOne([
+//            'owner' => PhotographerFactory::random()
+//        ]);
 
         PhotoFactory::createMany(10);
 

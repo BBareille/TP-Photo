@@ -16,7 +16,8 @@ class Photo extends Files
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\ManyToMany(targetEntity: Tags::class, inversedBy: 'photos')]
+    #[ORM\ManyToMany(targetEntity: Tags::class, inversedBy: 'photos',
+                cascade: ['persist', 'remove'])]
     private Collection $tags;
 
     public function __construct()

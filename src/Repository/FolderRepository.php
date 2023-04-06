@@ -42,7 +42,7 @@ class FolderRepository extends ServiceEntityRepository
     public function findFolderByPhoto($folderId){
         return $this->createQueryBuilder('f')
             ->select('f')
-            ->join('f.photoCollection', 'p')
+            ->join('f.childrenPhoto', 'p')
             ->where('p.id = :folderId')
             ->setParameter('folderId', $folderId)
             ->getQuery()

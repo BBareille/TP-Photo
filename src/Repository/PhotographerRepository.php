@@ -6,7 +6,9 @@ use App\Entity\Photographer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -17,7 +19,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @method Photographer[]    findAll()
  * @method Photographer[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PhotographerRepository extends ServiceEntityRepository implements UserLoaderInterface
+class PhotographerRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -41,33 +43,70 @@ class PhotographerRepository extends ServiceEntityRepository implements UserLoad
             $this->getEntityManager()->flush();
         }
     }
-
-//    /**
-//     * @return Photographer[] Returns an array of Photographer objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Photographer
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
-    public function loadUserByIdentifier(string $identifier): ?UserInterface
-    {
-        dd($this->findOneBy(['email'=> $identifier]));
-    }
+        
+        public function nbOfPhotoByUser($id)
+        {
+                $qb = $this->createQueryBuilder('u')
+                            ->join("u.allowedFolders", "f")
+                            ->join('f.childrenPhoto', 'p')
+                            ->select('count(p.id)')
+                            ->where('u.email = :id')
+                            ->setParameter('id', $id);
+                
+                return $qb->getQuery()->getSingleScalarResult();
+        }
+        
+        public function mostPopularFolder($id){
+                
+                return $this->createQueryBuilder('u')
+                            ->join('u.allowedFolders', 'f')
+                            ->join('f.childrenPhoto', 'p')
+                            ->select('f.name')
+                            ->where('u.email =:id')
+                            ->groupBy('f.id')
+                            ->setParameter('id', $id)
+                            ->orderBy('count(p.id)', 'DESC')
+                            ->setMaxResults(1)
+                            ->getQuery()
+                            ->getSingleColumnResult()
+                            ;
+        }
+        
+        public function nbOfTagByUser($id){
+                return $this->createQueryBuilder('u')
+                            ->join('u.allowedFolders', 'f')
+                            ->join('f.childrenPhoto', 'p')
+                            ->join('p.tags', 't')
+                            ->select('count(t.id)')
+                            ->where('u.email = :id')
+                            ->setParameter('id', $id)
+                            ->getQuery()
+                            ->getSingleScalarResult()
+                            ;
+        }
+        
+        public function mostPopularTag($id){
+                return $this->createQueryBuilder('u')
+                            ->join('u.allowedFolders', 'f')
+                            ->join('f.childrenPhoto', 'p')
+                            ->join('p.tags', 't')
+                            ->select('t.name')
+                            ->where('u.email =:id')
+                            ->setParameter('id', $id)
+                            ->orderBy('count(t.id)', 'DESC')
+                            ->setMaxResults(1)
+                            ->getQuery()
+                            ->getSingleScalarResult()
+                            ;
+        }
+        public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
+        {
+                if (!$user instanceof Photographer) {
+                        throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', \get_class($user)));
+                }
+        
+                $user->setPassword($newHashedPassword);
+        
+                $this->save($user, true);
+        }
 }

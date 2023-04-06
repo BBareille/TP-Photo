@@ -26,10 +26,10 @@ class Photo1Type extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('label')
+            ->add('name')
             ->add('description', TextareaType::class)
             ->add('tags', TextType::class)
-            ->add('folder', ChoiceType::class, [
+            ->add('parentFolder', ChoiceType::class, [
                 'choices' => $this->folderList,
                 'choice_label' => function(Folder $folder){
                     return $folder->getName();
