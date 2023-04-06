@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FolderRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Folder extends Files
 {
     #[ORM\Id]
@@ -88,6 +89,13 @@ class Folder extends Files
             $this->authorizedUser->remove($user);
             $user->removeAllowedFolder(null);
         }
+    }
+
+    #[ORM\PreFlush]
+    public function setAllowedFolderOnCreation()
+    {
+        $user = $this->getOwner();
+        $this->addAuthorizedUser( $user);
     }
 
 }

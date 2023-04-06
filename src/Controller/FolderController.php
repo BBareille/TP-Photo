@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Folder;
 use App\Entity\Photographer;
 use App\Entity\User;
+use App\Form\AddUserToFolderType;
 use App\Form\FolderType;
 use App\Repository\ClientRepository;
 use App\Repository\FolderRepository;
@@ -129,20 +130,35 @@ class FolderController extends AbstractController
 
         return $this->redirectToRoute('app_folder_index', [], Response::HTTP_SEE_OTHER);
     }
-    #[Route('/addAccessTo/{id}', name: 'app_folder_addaccesstouser', methods: ['GET'])]
+    #[Route('/addAccessTo/{id}', name: 'app_folder_addaccesstouser', methods: ['POST', 'GET'])]
     #[IsGranted('ROLE_PHOTO', message: 'Vous n\'êtes pas le propriétaire de ce dossier' , statusCode: 403)]
-    public function addAccessToUser(Folder $folder,int $id, ClientRepository $clientRepository, EntityManagerInterface $em): Response
+    public function addAccessToUser(Request $request,Folder $folder,int $id, ClientRepository $clientRepository, EntityManagerInterface $em): Response
     {
-        /** @var Photographer $photographer */
-        $photographer = $this->getUser();
-        $userToAdd = $clientRepository->find(1);
-        $photographer->addUserToMyPersonalFolder($userToAdd, $folder);
-        $em->persist($userToAdd);
-        $em->flush();
 
 
 
-        return $this->redirectToRoute('app_folder_show', ['id'=>$id]);
+
+        $form = $this->createForm(AddUserToFolderType::class);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+
+            $userToAdd = $form->get('userToAdd')->getData();
+            /** @var Photographer $photographer */
+            $photographer = $this->getUser();
+            $photographer->addUserToMyPersonalFolder($userToAdd, $folder);
+            $em->persist($userToAdd);
+            $em->flush();
+
+            return $this->redirectToRoute('app_folder_show', ['id'=>$id]);
+        }
+
+
+
+        return $this->render('/folder/addUserToFolder.html.twig', [
+            'form' => $form
+        ]);
     }
 
 

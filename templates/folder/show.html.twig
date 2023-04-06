@@ -9,6 +9,7 @@
                     <div class="flex justify-between w-1/2">
                         <a href="{{ path('app_image_new', {'id' : folder.id} )}}">Ajouter des photos à ce dossier</a>
                         <a href="{{ path('app_folder_addsubfolder', {'id': folder.id}) }}">Ajouter un sous-dossiers</a>
+                        <a href="{{ path('app_folder_addaccesstouser', {'id': folder.id}) }}">Ajouter un utilisateur à ce dossier</a>
                     </div>
         {% endif %}
     </div>
