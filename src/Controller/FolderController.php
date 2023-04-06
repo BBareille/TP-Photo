@@ -8,12 +8,10 @@ use App\Entity\User;
 use App\Form\FolderType;
 use App\Repository\ClientRepository;
 use App\Repository\FolderRepository;
-use App\Repository\PhotographerRepository;
 use App\Repository\PhotoRepository;
-use Doctrine\ORM\EntityManager;
+use App\Service\CheckFolder;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\MakerBundle\Tests\tmp\current_project_xml\src\Repository\UserRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,8 +21,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/folder')]
 class FolderController extends AbstractController
 {
-
-    public function __construct(private Security $security)
+    public function __construct(private Security $security,private CheckFolder $checkFolder)
     {
     }
 
@@ -60,7 +57,7 @@ class FolderController extends AbstractController
             $folder->setOwner($this->getUser());
             $folderRepository->save($folder, true);
 
-            return $this->redirectToRoute('app_folder_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_folder_privatefolder', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('folder/new.html.twig', [
@@ -92,12 +89,14 @@ class FolderController extends AbstractController
     #[Route('/{id}', name: 'app_folder_show', methods: ['GET'])]
     public function show(Folder $folder, PhotoRepository $photoRepository, int $id): Response
     {
-        if(!$this->getUser()){
-            return $this->redirectToRoute('index');
-        }
         /** @var User $user */
         $user = $this->getUser();
-//        $user->getAllowedFolder();
+
+        if(!$user || !$this->checkFolder->folderWhereUserIsAllowed($user, $folder)){
+            return $this->redirectToRoute('index');
+        }
+
+
         $photos = $photoRepository->findPhotoByFolder($id);
         return $this->render('folder/show.html.twig', [
             'photos' => $photos,
@@ -131,7 +130,7 @@ class FolderController extends AbstractController
         return $this->redirectToRoute('app_folder_index', [], Response::HTTP_SEE_OTHER);
     }
     #[Route('/addAccessTo/{id}', name: 'app_folder_addaccesstouser', methods: ['GET'])]
-    #[IsGranted('ROLE_PHOTO', statusCode: 403)]
+    #[IsGranted('ROLE_PHOTO', message: 'Vous n\'êtes pas le propriétaire de ce dossier' , statusCode: 403)]
     public function addAccessToUser(Folder $folder,int $id, ClientRepository $clientRepository, EntityManagerInterface $em): Response
     {
         /** @var Photographer $photographer */

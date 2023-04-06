@@ -10,9 +10,14 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: FolderRepository::class)]
 class Folder extends Files
 {
-    #[ORM\OneToMany(mappedBy: 'parentFolder', targetEntity: Folder::class ,cascade: ['persist', 'remove'] )]
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    protected ?int $id = null;
+    #[ORM\OneToMany(mappedBy: 'parentFolder', targetEntity: Folder::class,
+        cascade: ['persist', 'remove'] )]
     private ?Collection $childrenFolder;
-    #[ORM\OneToMany(mappedBy: 'parentFolder', targetEntity: Photo::class)]
+    #[ORM\OneToMany(mappedBy: 'parentFolder', targetEntity: Photo::class, cascade: ['persist', 'remove'])]
     private ?Collection $childrenPhoto;
     #[ORM\ManyToMany(targetEntity: Client::class, mappedBy: 'allowedFolders')]
     private Collection $authorizedUser;

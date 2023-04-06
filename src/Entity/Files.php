@@ -7,11 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\MappedSuperclass]
 abstract class Files
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    protected ?int $id = null;
-
     #[ORM\Column(length: 255)]
     protected ?string $name = null;
 

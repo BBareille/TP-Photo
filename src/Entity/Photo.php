@@ -10,6 +10,14 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: PhotoRepository::class)]
 class Photo extends Files
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    protected ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: Folder::class, inversedBy: 'childrenPhoto')]
+    protected ?Folder $parentFolder = null;
+
     #[ORM\Column(length: 255)]
     private ?string $source;
 
@@ -19,7 +27,6 @@ class Photo extends Files
     #[ORM\ManyToMany(targetEntity: Tags::class, inversedBy: 'photos',
                 cascade: ['persist', 'remove'])]
     private Collection $tags;
-
     public function __construct()
     {
         $this->tags = new ArrayCollection();

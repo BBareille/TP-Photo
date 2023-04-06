@@ -11,10 +11,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\MappedSuperclass]
 abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    protected ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
     protected ?string $email = null;

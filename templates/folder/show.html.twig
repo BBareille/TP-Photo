@@ -5,11 +5,12 @@
 {% block body %}
     <h1 class="text-4xl font-extrabold m-4 text-center">{{ folder.name }}</h1>
     <div class="flex justify-center mt-6">
-
+        {% if is_granted('ROLE_PHOTO') %}
                     <div class="flex justify-between w-1/2">
                         <a href="{{ path('app_image_new', {'id' : folder.id} )}}">Ajouter des photos à ce dossier</a>
                         <a href="{{ path('app_folder_addsubfolder', {'id': folder.id}) }}">Ajouter un sous-dossiers</a>
                     </div>
+        {% endif %}
     </div>
                 <div class="grid grid-cols-2 md:grid-cols-10 gap-4 justify-items-center">
 
@@ -29,7 +30,9 @@
                                         <img class="rounded-lg" src="/uploads/photo/{{ photo.source }}" alt="">
                                     </div>
                                     <div class="p-6 flex flex-col justify-center">
-                                        <a href="{{ path('app_image_edit', {'id': photo.id}) }}">Modifier l'image</a>
+                                            {% if is_granted('ROLE_PHOTO') %}
+                                            <a href="{{ path('app_image_edit', {'id': photo.id}) }}">Modifier l'image</a>
+                                            {% endif %}
                                         {% if photo.name %}
                                         <p>Nom: {{ photo.name}} </p>
                                         {% endif %}
@@ -55,9 +58,9 @@
 
 
     <a href="{{ path('app_folder_index') }}">Retourner à la liste des dossiers</a>
+    {% if is_granted('ROLE_PHOTO') %}
     <form method="post" action="{{ path('app_folder_delete', {'id' : folder.id}) }}">
     <button type="submit">Supprimer le dossier</button>
     </form>
-
-{#    {{ include('folder/_delete_form.html.twig') }}#}
+    {% endif %}
 {% endblock %}
