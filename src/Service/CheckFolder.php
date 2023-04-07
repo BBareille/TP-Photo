@@ -7,7 +7,7 @@ use App\Entity\User;
 
 class CheckFolder
 {
-    public function folderWhereUserIsAllowed(User $user, Folder $folderToCheck):bool{
+        public function folderWhereUserIsAllowed(User $user, Folder $folderToCheck):bool{
         $allowedFolders = $user->getAllowedFolder();
         foreach ($allowedFolders as $folder) {
             if($folder == $folderToCheck)

@@ -22,7 +22,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/folder')]
 class FolderController extends AbstractController
 {
-    public function __construct(private Security $security,private CheckFolder $checkFolder)
+    public function __construct(private Security $security, private
+    CheckFolder $checkFolder)
     {
     }
 
@@ -134,10 +135,6 @@ class FolderController extends AbstractController
     #[IsGranted('ROLE_PHOTO', message: 'Vous n\'êtes pas le propriétaire de ce dossier' , statusCode: 403)]
     public function addAccessToUser(Request $request,Folder $folder,int $id, ClientRepository $clientRepository, EntityManagerInterface $em): Response
     {
-
-
-
-
         $form = $this->createForm(AddUserToFolderType::class);
         $form->handleRequest($request);
 

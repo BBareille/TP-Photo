@@ -11,6 +11,10 @@ class Photographer extends User
 
 {    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Folder::class, cascade: ['persist', 'remove'])]
     private ?Collection $personalFolder;
+    
+    #[ORM\OneToMany(mappedBy: 'photographer', targetEntity: MetaData::class,
+                cascade: ['persist', 'remove'])]
+    private Collection $metaDataList;
     public function __construct()
     {
         parent::__construct();
@@ -56,6 +60,10 @@ class Photographer extends User
         } else {
             throw new \Exception('Utilisateur inconnu');
         }
+    }
+    
+    public function getMetaDataList(): Collection{
+            return $this->metaDataList;
     }
 
 }

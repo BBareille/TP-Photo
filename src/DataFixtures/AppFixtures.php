@@ -28,7 +28,7 @@ class AppFixtures extends Fixture
 //            'owner' => PhotographerFactory::random()
 //        ]);
 
-        PhotoFactory::createMany(10);
+//        PhotoFactory::createMany(10);
 
 
 

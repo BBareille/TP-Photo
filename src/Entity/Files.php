@@ -4,9 +4,18 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\MappedSuperclass]
+#[ORM\Entity]
+#[ORM\InheritanceType('JOINED')]
+#[ORM\DiscriminatorColumn(name: 'disc', type: 'string')]
+#[ORM\DiscriminatorMap(['folder' => Folder::class, 'photo' =>
+            Photo::class])]
 abstract class Files
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    protected ?int $id = null;
+    
     #[ORM\Column(length: 255)]
     protected ?string $name = null;
 
@@ -15,6 +24,9 @@ abstract class Files
 
     #[ORM\ManyToOne(targetEntity: Folder::class, inversedBy: 'childrenFolder')]
     protected ?Folder $parentFolder = null;
+    
+    #[ORM\OneToOne(mappedBy: 'files', targetEntity: MetaData::class)]
+    protected MetaData $metaData;
 
     public function getId(): ?int
     {
@@ -53,5 +65,9 @@ abstract class Files
     {
         $this->parentFolder = $folder;
         return $this;
+    }
+    
+    public function getMetaData(): MetaData{
+            return $this->metaData;
     }
 }
