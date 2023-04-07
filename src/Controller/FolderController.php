@@ -2,16 +2,20 @@
 
 namespace App\Controller;
 
+use App\Entity\ColorFolder;
 use App\Entity\Folder;
 use App\Entity\Photographer;
 use App\Entity\User;
 use App\Form\AddUserToFolderType;
+use App\Form\ColorFolderType;
 use App\Form\FolderType;
 use App\Repository\ClientRepository;
+use App\Repository\ColorFolderRepository;
 use App\Repository\FolderRepository;
 use App\Repository\PhotoRepository;
 use App\Service\CheckFolder;
 use Doctrine\ORM\EntityManagerInterface;
+use Faker\Core\Color;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -158,5 +162,26 @@ class FolderController extends AbstractController
         ]);
     }
 
+    #[Route('/colorFolder/{id}', name: 'app_folder_definecolorfolder')]
+    public function defineColorFolder(Folder $folder, Request $request, ColorFolderRepository $colorFolderRepository)
+    {
+        $colorFolder = new ColorFolder();
+        $form = $this->createForm(ColorFolderType::class, $colorFolder);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $colorFolder
+                ->setOwner($this->getUser())
+                ->setParentFolder($folder)
+            ;
+
+            $colorFolderRepository->save($colorFolder, true);
+        }
+
+
+        return $this->render('folder/colorFolderForm.html.twig', [
+            'form' => $form
+        ]);
+    }
 
 }

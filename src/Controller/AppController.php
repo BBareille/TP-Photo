@@ -4,7 +4,6 @@ namespace App\Controller;
 use App\Entity\Photographer;
 use App\Entity\User;
 use App\Repository\PhotographerRepository;
-use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,11 +19,11 @@ class AppController extends AbstractController
 
         if($this->getUser()){
             $userIdentifier = $this->getUser()->getUserIdentifier();
-            $nbPhoto = $repository->nbOfPhotoByUser($userIdentifier);
-            $nbTags = $repository->nbOfTagByUser($userIdentifier);
-            $mostPopularFolder = $repository->mostPopularFolder
-            ($userIdentifier);
-            $mostPopularTag = $repository->mostPopularTag($userIdentifier);
+//            $nbPhoto = $repository->nbOfPhotoByUser($userIdentifier);
+//            $nbTags = $repository->nbOfTagByUser($userIdentifier);
+//            $mostPopularFolder = $repository->mostPopularFolder
+//            ($userIdentifier);
+//            $mostPopularTag = $repository->mostPopularTag($userIdentifier);
         }
 
         return $this->render('app/home.html.twig', [

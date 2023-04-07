@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\MetaDataRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MetaDataRepository::class)]
@@ -24,7 +26,14 @@ class MetaData
     
     #[ORM\ManyToOne(targetEntity: Photographer::class, inversedBy: 'metaDataList')]
     private Photographer $photographer;
-    
+
+    #[ORM\ManyToMany(targetEntity: Files::class, inversedBy: 'metaData')]
+    private Collection $files;
+
+    public function __construct()
+    {
+        $this->files = new ArrayCollection();
+    }
     /**
      * @return Photographer
      */
@@ -57,9 +66,7 @@ class MetaData
             $this->files = $files;
     }
     
-    #[ORM\OneToOne(inversedBy: 'metaData', targetEntity: Files::class)]
-    #[ORM\JoinColumn(name: 'files_id', referencedColumnName: 'id')]
-    private Files $files;
+
 
     public function getId(): ?int
     {
@@ -98,6 +105,22 @@ class MetaData
     public function setValue(?string $value): self
     {
         $this->value = $value;
+
+        return $this;
+    }
+
+    public function addFile(Files $file): self
+    {
+        if (!$this->files->contains($file)) {
+            $this->files->add($file);
+        }
+
+        return $this;
+    }
+
+    public function removeFile(Files $file): self
+    {
+        $this->files->removeElement($file);
 
         return $this;
     }

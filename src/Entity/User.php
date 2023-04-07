@@ -9,10 +9,10 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity]
-#[ORM\InheritanceType('JOINED')]
+#[ORM\InheritanceType('SINGLE_TABLE')]
 #[ORM\DiscriminatorColumn(name: 'disc', type: 'string')]
 #[ORM\DiscriminatorMap(['client' => Client::class, 'photographer' => Photographer::class])]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -27,7 +27,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     protected ?string $password = null;
-    
+
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Folder::class, cascade: ['persist', 'remove'])]
+    private ?Collection $personalFolder;
     #[ORM\ManyToMany(targetEntity: Folder::class, inversedBy: 'authorizedUser')]
     protected Collection $allowedFolders;
 
@@ -129,5 +131,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Folder>
+     */
+    public function getAllowedFolders(): Collection
+    {
+        return $this->allowedFolders;
     }
 }

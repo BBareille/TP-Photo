@@ -6,6 +6,7 @@ use App\Entity\Photo;
 use App\Entity\Tags;
 use App\Form\Photo1Type;
 use App\Form\PhotoType;
+use App\Repository\FilesRepository;
 use App\Repository\FolderRepository;
 use App\Repository\PhotoRepository;
 use App\Repository\TagsRepository;
@@ -62,11 +63,11 @@ class PhotoController extends AbstractController
 
 
     #[Route('/{id}/edit', name: 'app_image_edit', methods: ['GET', 'POST'])]
-    public function edit($id ,Request $request, Photo $photo,TagsRepository $tagsRepository, PhotoRepository $photoRepository, FolderRepository $folderRepository): Response
+    public function edit($id ,Request $request, Photo $photo, FilesRepository $filesRepository, PhotoRepository $photoRepository): Response
     {
         $form = $this->createForm(Photo1Type::class, $photo);
         $form->handleRequest($request);
-        $folder = $folderRepository->findFolderByPhoto($id);
+        $folder = $filesRepository->findFolderByPhoto($id);
 
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -76,7 +77,7 @@ class PhotoController extends AbstractController
         }
 
         return $this->renderForm('image/edit.html.twig', [
-            'folder' => $folder[0],
+            'folder' => $folder,
             'photo' => $photo,
             'form' => $form,
         ]);

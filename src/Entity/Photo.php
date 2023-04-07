@@ -17,6 +17,8 @@ class Photo extends Files
 
     #[ORM\ManyToOne(targetEntity: Folder::class, inversedBy: 'childrenPhoto')]
     protected ?Folder $parentFolder = null;
+    #[ORM\ManyToOne(targetEntity: ColorFolder::class, cascade: ['persist', 'remove'], inversedBy: 'childrenPhoto')]
+    private ?ColorFolder $colorFolder = null;
 
     #[ORM\Column(length: 255)]
     private ?string $source;
@@ -27,9 +29,16 @@ class Photo extends Files
     #[ORM\ManyToMany(targetEntity: Tags::class, inversedBy: 'photos',
                 cascade: ['persist', 'remove'])]
     private Collection $tags;
+    #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Comment::class)]
+    private Collection $comments;
+    #[ORM\Column(name: 'isValid', type: "boolean")]
+    private bool $isValid = false;
+    #[ORM\Column(name: 'isRejected', type: "boolean")]
+    private ?bool $isRejected = false;
     public function __construct()
     {
         $this->tags = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getTags(){
@@ -84,6 +93,89 @@ class Photo extends Files
     public function setSource(string $source): void
     {
         $this->source = $source;
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getParentFolder(): ?Folder
+    {
+        return $this->parentFolder;
+    }
+
+    public function setParentFolder(?Folder $parentFolder): self
+    {
+        $this->parentFolder = $parentFolder;
+
+        return $this;
+    }
+
+    public function isIsValid(): ?bool
+    {
+        return $this->isValid;
+    }
+
+    public function setIsValid(bool $isValid): self
+    {
+        $this->isValid = $isValid;
+
+        return $this;
+    }
+
+    public function isIsRejected(): ?bool
+    {
+        return $this->isRejected;
+    }
+
+    public function setIsRejected(bool $isRejected): self
+    {
+        $this->isRejected = $isRejected;
+
+        return $this;
+    }
+
+    public function getColorFolder(): ?ColorFolder
+    {
+        return $this->colorFolder;
+    }
+
+    public function setColorFolder(?ColorFolder $colorFolder): self
+    {
+        $this->colorFolder = $colorFolder;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): self
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): self
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getCreator() === $this) {
+                $comment->setCreator(null);
+            }
+        }
+
+        return $this;
     }
 
 

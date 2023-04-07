@@ -52,7 +52,7 @@ class PhotographerRepository extends ServiceEntityRepository implements Password
                             ->select('count(p.id)')
                             ->where('u.email = :id')
                             ->setParameter('id', $id);
-                
+
                 return $qb->getQuery()->getSingleScalarResult();
         }
         

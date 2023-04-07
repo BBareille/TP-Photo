@@ -98,4 +98,33 @@ class Folder extends Files
         $this->addAuthorizedUser( $user);
     }
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function removeChildrenFolder(Folder $childrenFolder): self
+    {
+        if ($this->childrenFolder->removeElement($childrenFolder)) {
+            // set the owning side to null (unless already changed)
+            if ($childrenFolder->getParentFolder() === $this) {
+                $childrenFolder->setParentFolder(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function removeChildrenPhoto(Photo $childrenPhoto): self
+    {
+        if ($this->childrenPhoto->removeElement($childrenPhoto)) {
+            // set the owning side to null (unless already changed)
+            if ($childrenPhoto->getParentFolder() === $this) {
+                $childrenPhoto->setParentFolder(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

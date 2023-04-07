@@ -19,6 +19,8 @@ class Photographer extends User
     {
         parent::__construct();
         $this->personalFolder = new ArrayCollection();
+        $this->metaDataList = new ArrayCollection();
+        $this->allowedFolders = new ArrayCollection();
     }
 
     public function getPersonalFolder(): Collection
@@ -66,4 +68,25 @@ class Photographer extends User
             return $this->metaDataList;
     }
 
+    public function addMetaDataList(MetaData $metaDataList): self
+    {
+        if (!$this->metaDataList->contains($metaDataList)) {
+            $this->metaDataList->add($metaDataList);
+            $metaDataList->setPhotographer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMetaDataList(MetaData $metaDataList): self
+    {
+        if ($this->metaDataList->removeElement($metaDataList)) {
+            // set the owning side to null (unless already changed)
+            if ($metaDataList->getPhotographer() === $this) {
+                $metaDataList->setPhotographer(null);
+            }
+        }
+
+        return $this;
+    }
 }

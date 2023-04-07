@@ -11,6 +11,10 @@
                         <a href="{{ path('app_folder_addsubfolder', {'id': folder.id}) }}">Ajouter un sous-dossiers</a>
                         <a href="{{ path('app_folder_addaccesstouser', {'id': folder.id}) }}">Ajouter un utilisateur à ce dossier</a>
                     </div>
+            {% else %}
+            <div class="flex justify-between">
+                <a href='{{ path('app_folder_definecolorfolder', {'id': folder.id}) }}'>Définir les dossiers de classement</a>
+            </div>
         {% endif %}
     </div>
                 <div class="grid grid-cols-2 md:grid-cols-10 gap-4 justify-items-center">
